@@ -37,6 +37,9 @@ contract Auction{
  
     // Estado de la notaría
     bool private _activeContract;
+
+
+
     
     // ----------- Eventos (pueden ser emitidos por el Smart Contract) -----------
     event Status(string _message);
@@ -119,6 +122,7 @@ contract Auction{
     añadir a blacklist
     sacar de blacklist
     modificar precio
+    historico de owners de una obra
 
 
     struct {
