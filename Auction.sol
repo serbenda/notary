@@ -11,11 +11,39 @@ pragma solidity ^0.8.16;
 contract Auction {
 
     // ----------- Variables (datos) -----------
+    // Define usuarios owner:
+    // Marketing usuario que recibe la pasta
+    // owner dueño del contrato
+    address payable private _marketing;
+    uint private _owner;
+
+
+    // registro de patentes
+    mapping(address => address) public _registry; 
+
+    // registro en whitelist
+    mapping(address => bool) private _whitelist;
+
+    // registro en blacklist
+    mapping(address => bool) private _blacklist;
+
+    // contador de registros
+    mapping(address => uint) private _count;
+
+
+
+
+
+
     // Información de la subasta
     string private description;
     uint private basePrice;
     uint256 private secondsToEnd;
     uint256 private createdTime;
+
+    // mapping
+
+
 
     // Antiguo/nuevo dueño de subasta
     address payable public originalOwner;
