@@ -56,6 +56,8 @@ contract Auction{
         // Se emite un Evento
         emit Status("Notaria generada");
     }
+
+    
     // ------------ Funciones que modifican datos (set) ------------
 
     // Funcion
@@ -63,10 +65,19 @@ contract Auction{
     // Uso:    Permite a cualquier postor hacer una oferta de dinero para la subata
     //         El dinero es almacenado en el contrato, junto con el nombre del postor
     //         El postor cuya oferta ha sido superada recibe de vuelta el dinero pujado
-    function bid() public payable {
-        if(block.timestamp > (createdTime + secondsToEnd)  && activeContract == true){
-            checkIfAuctionEnded();
+    function register() public payable {
+        if(msg.value != _price  || activeContract == false){
+            salir();
         } else {
+
+            // Que no este el hash registrado
+            // que el usuario no este baneado
+            // 
+
+
+
+
+
             if (msg.value > highestPrice && msg.value > basePrice){
                 // Devuelve el dinero al ANTIGUO maximo postor
                 highestBidder.transfer(highestPrice);
@@ -85,27 +96,49 @@ contract Auction{
         }
     }
 
-    // Funcion
-    // Nombre: checkIfAuctionEnded
-    // Uso:    Comprueba si la puja ha terminado, y en ese caso, 
+
     //         transfiere el balance del contrato al propietario de la subasta 
-    function checkIfAuctionEnded() public{
-        if (block.timestamp > (createdTime + secondsToEnd)){
+    function salir() public{
+        if (msg.value != _price)){
+            // si el precio no es igual > !! < se devuelve la pasta
+            // 
             // Finaliza la subasta
-            activeContract = false;
-            
-            // Transfiere el dinero (maxima puja) al propietario original de la subasta
-            newOwner = highestBidder;
-            originalOwner.transfer(highestPrice);
-            
-            // Se emiten varios eventos
-            emit Status("La subasta ha finalizado");
-            emit Result("El ganador de la subasta ha sido:", highestBidder);
+            emit Status("Has mandado mas pasta, se devuelve la transaccion ");
+
+            // Pendiente ver funcion que devuelva la pasta
+        
         } else {
-            revert("La subasta esta activa");
+
+           emit Status("el contrato no esta activo");
+
         }
+        revert("La subasta esta activa");
     }
         
+    transferir la patente
+    añadir a blacklist
+    sacar de blacklist
+    modificar precio
+
+
+    struct {
+        string hash pdf
+        string 2hash (dni+nombre)
+        address: account
+    }
+    
+
+    transfer:
+
+        - inputs:
+            - string hash pdf
+            - to desrinatario......
+
+        - dueño wallet ¿¿ pendieng check???
+        // como ver comprobacion
+
+
+
     // ------------ Funciones de panico/emergencia ------------
 
     // Funcion
