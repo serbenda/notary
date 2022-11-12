@@ -8,15 +8,14 @@ pragma solidity ^0.8.16;
 // Logica: Implementa subasta de productos entre varios participantes
 
 // Declaracion del Smart Contract - Auction
-contract Auction {
+contract Auction{
 
     // ----------- Variables (datos) -----------
-    // Define usuarios owner:
-    // Marketing usuario que recibe la pasta
-    // owner dueño del contrato
-    address payable private _marketing;
-    uint private _owner;
+    // Información de la subasta
 
+    // Antiguo/nuevo dueño de subasta
+    address payable private _marketing;   
+    address private _owner;     
 
     // registro de patentes
     mapping(address => address) public _registry; 
@@ -27,55 +26,36 @@ contract Auction {
     // registro en blacklist
     mapping(address => bool) private _blacklist;
 
-    // contador de registros
+    // contador de registros de una persona
     mapping(address => uint) private _count;
 
+    // contador de patentes global
+    uint8 public _total; 
 
-
-
-
-
-    // Información de la subasta
-    string private description;
-    uint private basePrice;
-    uint256 private secondsToEnd;
-    uint256 private createdTime;
-
-    // mapping
-
-
-
-    // Antiguo/nuevo dueño de subasta
-    address payable public originalOwner;
-    address public newOwner;
-
-    // Puja mas alta
-    address payable public highestBidder;
-    uint public highestPrice;
-    
-    // Estado de la subasta
-    bool private activeContract;
+    // precio
+    uint8 public _price;
+ 
+    // Estado de la notaría
+    bool private _activeContract;
     
     // ----------- Eventos (pueden ser emitidos por el Smart Contract) -----------
     event Status(string _message);
-    event Result(string _message, address winner);
+
+    event Result(string _message, uint8 _total);
 
     // ----------- Constructor -----------
     // Uso: Inicializa el Smart Contract - Auction con: description, precio y tiempo
-    constructor() {
-        
-        // Inicializo el valor a las variables (datos)
-        description = "En esta subasta se ofrece un coche. Se trata de un Ford Focus de ...";
-        basePrice = 1 ether;   
-        secondsToEnd = 600;   // 86400 = 24h | 3600 = 1h | 900 = 15 min | 600 = 10 min
-        activeContract = true;
-        createdTime = block.timestamp;
-        originalOwner = payable(msg.sender);
-        
+    constructor(_marketing, _owner, _price ) {
+        _marketing = _marketing;
+        _owner = _owner;
+        _total = 0;
+        _price = _price;
+        _activeContract = true;
+
+
         // Se emite un Evento
-        emit Status("Subasta creada");
+        emit Status("Notaria generada");
     }
-    
     // ------------ Funciones que modifican datos (set) ------------
 
     // Funcion
