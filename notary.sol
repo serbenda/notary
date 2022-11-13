@@ -60,7 +60,7 @@ contract Notary is Ownable{
         isActive = true;
     }
 
-    // Writing functions
+    // ----------- Writing functions -----------
     function createRecord(
         string calldata hashId,
         string calldata typePatent,
@@ -79,7 +79,6 @@ contract Notary is Ownable{
             address(0)            
         );
         status[hashId][block.timestamp] = "ready";
-        status[hashId][block.timestamp] = "ready";
         emit patentRecord(
             "Patent record successfully created",
             msg.sender,
@@ -89,7 +88,7 @@ contract Notary is Ownable{
         );
     }
    
-    // Reading functions
+    // ----------- Reading functions -----------
     function getRecord(string calldata hashId)
         public
         view
@@ -114,8 +113,7 @@ contract Notary is Ownable{
         );
     }
 
-    // Panic functions
-
+    // ----------- Panic functions -----------
     function enableContract() external onlyOwner {
         require(!isActive, "Contract already enabled");
         isActive = true;
