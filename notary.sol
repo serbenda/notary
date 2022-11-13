@@ -19,7 +19,8 @@ contract Notary is Ownable{
     bool public isActive;
 
     address payable public _originalOnwer;
-    uint public baseRate;
+    uint public baseRateRecord;
+    uint public baseRateGet;
 
     // Batch variables
     struct PatentRecord {
@@ -53,12 +54,16 @@ contract Notary is Ownable{
         uint256 creationDate
     );
 
+    event Status(string _message);
+
     // ----------- Constructor -----------
-    constructor() {
+    constructor(uint256 _baseRateRecord, uint256 _baseRateGet)  {
         contractOwner = msg.sender;
-        baseRate = 1 gwei;
+        baseRateRecord = _baseRateRecord;
+        baseRateGet = _baseRateGet;
         isActive = true;
     }
+
 
     // ----------- Writing functions -----------
     function createRecord(
@@ -66,32 +71,41 @@ contract Notary is Ownable{
         string calldata typePatent,
         string calldata hashPatent,
         string calldata patentName
-    ) public contractActive {
-        timestamps.push(block.timestamp);
-        record[hashId] = PatentRecord(
-            hashId,
-            typePatent,
-            hashPatent,
-            msg.sender,
-            patentName,
-            block.timestamp,
-            "ready",
-            address(0)            
-        );
-        status[hashId][block.timestamp] = "ready";
-        emit patentRecord(
-            "Patent record successfully created",
-            msg.sender,
-            hashId,
-            hashPatent,
-            block.timestamp
-        );
+    ) public payable contractActive {
+        if (msg.value > baseRateRecord){
+            timestamps.push(block.timestamp);
+            record[hashId] = PatentRecord(
+                hashId,
+                typePatent,
+                hashPatent,
+                msg.sender,
+                patentName,
+                block.timestamp,
+                "ready",
+                address(0)            
+            );
+            status[hashId][block.timestamp] = "ready";
+            
+            emit patentRecord(
+                "Patent record successfully created",
+                msg.sender,
+                hashId,
+                hashPatent,
+                block.timestamp
+            );
+        } else {
+            emit Status("You dont reach minimum rate");
+            revert("You dont reach minimum rate");
+       }
     }
+             
+
+
    
     // ----------- Reading functions -----------
     function getRecord(string calldata hashId)
         public
-        view
+        payable
         returns (
             string memory,
             string memory,
@@ -102,7 +116,8 @@ contract Notary is Ownable{
             string memory
         )
     {
-        return (
+        if (msg.value > baseRateGet){
+            return (
             record[hashId].hashId,
             record[hashId].typePatent,
             record[hashId].hashPatent,
@@ -111,7 +126,13 @@ contract Notary is Ownable{
             record[hashId].creationDate,
             record[hashId].currentStatus
         );
+
+        } else {
+            emit Status("You dont reach minimum rate");
+            revert("You dont reach minimum rate");
+       }
     }
+
 
     // ----------- Panic functions -----------
     function enableContract() external onlyOwner {
