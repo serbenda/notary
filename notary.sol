@@ -18,9 +18,8 @@ contract Notary is Ownable{
     address public contractOwner;
     bool public isActive;
 
-    address payable public _originalOnwer;
-    uint public baseRateRecord;
-    uint public baseRateGet;
+    uint256 public baseRateRecord;
+    uint256 public baseRateGet;
 
     // Batch variables
     struct PatentRecord {
@@ -54,6 +53,9 @@ contract Notary is Ownable{
         uint256 creationDate
     );
 
+    event updatePrice(string _message, uint256 baseRateRecord, uint256 baseRateGet);
+
+
     event Status(string _message);
 
     // ----------- Constructor -----------
@@ -72,6 +74,7 @@ contract Notary is Ownable{
         string calldata hashPatent,
         string calldata patentName
     ) public payable contractActive {
+        require(isActive, "Contract is not enabled");
         if (msg.value > baseRateRecord){
             timestamps.push(block.timestamp);
             record[hashId] = PatentRecord(
@@ -131,6 +134,14 @@ contract Notary is Ownable{
             emit Status("You dont reach minimum rate");
             revert("You dont reach minimum rate");
        }
+    }
+
+    // ----------- Modify pricing function -----------
+    function modifiyPrice(uint256 _baseRateRecord, uint256 _baseRateGet) external onlyOwner {
+        require(_baseRateRecord != baseRateRecord || _baseRateGet != baseRateGet, "Pricing proposed is the same that current one");
+        baseRateRecord = _baseRateRecord;
+        baseRateGet = _baseRateGet;
+        emit updatePrice("Price is updated (baseRateRecord,baseRateGet):",baseRateRecord,baseRateGet);
     }
 
 
